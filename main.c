@@ -9,9 +9,9 @@
 #include "estacionamento.h"
 #include "funcionarios.h"
 #include "logs.h"
+#include "menu.h"
 
 int main() {
-  puts("Abrindo estacionamento");
   Estacionamento *estacionamento = (Estacionamento *) malloc(sizeof(Estacionamento));
   Funcionario *funcionarios = (Funcionario *) malloc(sizeof(Funcionario));
   Carro *carros = (Carro *) malloc(sizeof(Carro));
@@ -20,17 +20,25 @@ int main() {
   estacionamento->carros = carros;
 
   iniciarEstacionamento(estacionamento);
-  puts("Adicionando Funcionarios");
-  adicionarFuncionarios(funcionarios, NULL, NULL, NULL);
-  puts("");
-  ordenar(estacionamento->funcionarios->prox, 1);
-//  imprimirFuncionarios(estacionamento->funcionarios);
-
-  adicionarCarros(estacionamento, "A1");
-  adicionarCarros(estacionamento, "A2");
-  adicionarCarros(estacionamento, "A3");
-
-  retirarCarro(estacionamento, 12, "A2");
+  int rodar = 0;
+  while (rodar == 0) {
+    rodar = menu(estacionamento);
+    puts("");
+  }
+//  puts("Adicionando Funcionarios");
+//  adicionarFuncionarios(estacionamento->funcionarios, NULL, NULL, NULL);
+//  puts("");
+//  ordenar(estacionamento->funcionarios->prox, 1);
+////  imprimirFuncionarios(estacionamento->funcionarios);
+//
+//  adicionarCarros(estacionamento, "A1", true);
+//  adicionarCarros(estacionamento, "A2", true);
+//  adicionarCarros(estacionamento, "A3", true);
+//  adicionarCarros(estacionamento, "A4", true);
+//
+//  retirarCarro(estacionamento, 12, "A2");
+//  retirarCarro(estacionamento, 15, "A3");
+//  retirarCarro(estacionamento, 20, "A1");
 
 //  if (estacionamentoSemCarros(estacionamento)) puts("Estacionamento vazio!");
   return 0;

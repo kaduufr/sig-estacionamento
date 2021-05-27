@@ -5,40 +5,39 @@
 #ifndef EDPROVA1_FUNCIONARIOS_H
 #define EDPROVA1_FUNCIONARIOS_H
 
-// se quiser que sejam mais funcionarios, altere esse valor.
-
 int id = 1;
 
-void adicionarFuncionarios(Funcionario *funcionarios, char *nomeA, int idA, int idadeA) {
-  int i=0;
-  while (i < NUM_FUNCIONARIOS) {
-    if (semFuncionarios(funcionarios)) {
-      funcionarios->prox = novoFuncionario(nomeA,idA,idadeA);
-    } else if (funcionarioJaExiste(funcionarios, idA)) {
-      return;
-    } else {
-      Funcionario *tmp = funcionarios->prox;
-      while (tmp->prox != NULL) {
-        tmp = tmp->prox;
-      }
-      tmp->prox = novoFuncionario(nomeA,idA,idadeA);
+void adicionarFuncionarios(Funcionario *funcionarios, char *nomeA, int idA, int idadeA, bool info){
+  if (semFuncionarios(funcionarios)){
+    funcionarios->prox = novoFuncionario(nomeA, idA, idadeA, info);
+  } else if (funcionarioJaExiste(funcionarios, idA)) {
+    return;
+  } else {
+    Funcionario *tmp = funcionarios->prox;
+    while (tmp->prox != NULL) {
+      tmp = tmp->prox;
     }
-    i++;
+    tmp->prox = novoFuncionario(nomeA, idA, idadeA, info);
   }
 }
 
-Funcionario* novoFuncionario(char *nomeA, int idA, int idadeA) {
+Funcionario *novoFuncionario(char *nomeA, int idA, int idadeA, bool info) {
 
   Funcionario *novo = (Funcionario *) malloc(sizeof(Funcionario));
 
-  if (nomeA != NULL && (void *) idA != NULL && (void *) idadeA != NULL) {
+  if (nomeA != NULL && idA != 0 && (void *) idadeA != NULL) {
     novo->id = idA;
     novo->idade = idadeA;
     novo->prox = NULL;
     novo->nome = nomeA;
+  } else if (nomeA != NULL && idA == 0) {
+    novo->nome = nomeA;
+    novo->prox = NULL;
+    novo->idade = idadeA;
+    novo->id = id;
   } else {
     int idade = rand() % 50;
-    while (idade< 18 || idade>= 50) {
+    while (idade < 18 || idade >= 50) {
       idade = rand() % 50;
     }
     novo->id = id;
@@ -47,6 +46,9 @@ Funcionario* novoFuncionario(char *nomeA, int idA, int idadeA) {
     char *nome = malloc(sizeof(char) * 4);
     snprintf(nome, sizeof(char) * 4, "X%d", id);
     novo->nome = nome;
+  }
+  if (info) {
+    printf("Funcionario de nome %s (ID = %d, Idade = %d) cadastrado\n", novo->nome, novo->id, novo->idade);
   }
   id++;
   return novo;
@@ -59,7 +61,7 @@ void imprimirFuncionarios(Funcionario *funcionarios) {
   }
   Funcionario *tmp = funcionarios->prox;
   while (tmp != NULL) {
-    printf("%s\n", tmp->nome);
+    printf("ID: %d \t Nome: %s \t Idade: %d \n", tmp->id ,tmp->nome, tmp->idade);
     tmp = tmp->prox;
   }
 }
@@ -76,19 +78,19 @@ void ordenarPorNome(Funcionario *functionarios) {
   Funcionario *aux = functionarios, *t;
   char s[100];
 
-  while(aux != NULL) {
+  while (aux != NULL) {
     t = aux->prox;
     while(t != NULL) {
-      if(strcmp(aux->nome, t->nome) > 0) { //se vir depois
+      if(strcmp(aux->nome, t->nome) > 0) {
         Funcionario tmp = *t;
 
-        strcpy(t->nome, aux->nome);
-//        t->nome = aux->nome;
+//        strcpy(t->nome, aux->nome);
+        t->nome = aux->nome;
         t->id = aux->id;
         t->idade = aux->idade;
 
-        strcpy(aux->nome, tmp.nome);
-//        aux->nome = tmp.nome;
+//        strcpy(aux->nome, tmp.nome);
+        aux->nome = tmp.nome;
         aux->id = tmp.id;
         aux->idade = tmp.idade;
       }
@@ -102,16 +104,17 @@ void ordenarPorIdade(Funcionario *funcionarios) {
 
   Funcionario *aux = funcionarios, *t;
 
-  while(aux != NULL) {
+  while (aux != NULL) {
     t = aux->prox;
-    while(t != NULL) {
-      if(aux->idade > t->idade) {
+    while (t != NULL) {
+      if (aux->idade > t->idade) {
         Funcionario tmp = *t;
 
         t->nome = aux->nome;
         t->id = aux->id;
         t->idade = aux->idade;
 
+//        strcpy(aux->nome, tmp.nome);
         aux->nome = tmp.nome;
         aux->id = tmp.id;
         aux->idade = tmp.idade;
@@ -126,16 +129,18 @@ void ordenarPorId(Funcionario *funcionarios) {
 
   Funcionario *aux = funcionarios, *t;
 
-  while(aux != NULL) {
+  while (aux != NULL) {
     t = aux->prox;
-    while(t != NULL) {
-      if(aux->idade > t->idade) {
+    while (t != NULL) {
+      if (aux->id > t->id) {
         Funcionario tmp = *t;
 
+//        strcpy(t->nome, aux->nome);
         t->nome = aux->nome;
         t->id = aux->id;
         t->idade = aux->idade;
 
+//        strcpy(aux->nome, tmp.nome);
         aux->nome = tmp.nome;
         aux->id = tmp.id;
         aux->idade = tmp.idade;
@@ -146,8 +151,8 @@ void ordenarPorId(Funcionario *funcionarios) {
   }
 }
 
-void ordenar(Funcionario *funcionarios, int tipo){
-  if(funcionarios == NULL || (funcionarios)->prox == NULL) return;
+void ordenar(Funcionario *funcionarios, int tipo) {
+  if (funcionarios == NULL || (funcionarios)->prox == NULL) return;
 
   switch (tipo) {
 //    1: ordenar pelo id

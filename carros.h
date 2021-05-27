@@ -7,16 +7,19 @@
 
 int id_carros = 1;
 
-void adicionarCarros(Estacionamento *estacionamento, char *placa) {
+void adicionarCarros(Estacionamento *estacionamento, char *placa, bool info) {
   Carro *carros = estacionamento->carros;
   if (!estacionamento->aberto) {
     puts("Estacionamento Fechado");
   } else if (estacionamento->total_carros >= 3) {
-    printf("Estacionamento cheio!!!");
+    puts("Estacionamento Lotado!!!");
     return;
   } else if (semCarros(carros)) {
     carros->prox = novoCarro(placa);
     estacionamento->total_carros++;
+    if (info) {
+      printf("Carro %s entrou. Total = %d\n", placa, estacionamento->total_carros);
+    }
   } else {
     Carro *tmp = carros->prox;
     while (tmp->prox != NULL) {
@@ -24,6 +27,9 @@ void adicionarCarros(Estacionamento *estacionamento, char *placa) {
     }
     tmp->prox = novoCarro(placa);
     estacionamento->total_carros++;
+    if (info) {
+      printf("Carro %s entrou. Total = %d\n", placa, estacionamento->total_carros);
+    }
   }
 }
 
@@ -49,12 +55,19 @@ void retirarCarro(Estacionamento *estacionamento, int tempo, char *placa) {
   } else {
     retirarCarroPelaSaida(estacionamento,estacionamento->funcionarios, estacionamento->carros, tempo, placa);
   }
-  estacionamento->dinheiro = tempo * 12;
-  estacionamento->total_carros--;
+  estacionamento->dinheiro = estacionamento->dinheiro + (tempo * 12);
+  verificarValorArrecadado(estacionamento);
+  if (estacionamentoSemCarros(estacionamento) && !estacionamento->aberto && !estacionamento->reformado) {
+    puts("Fechamento do estacionamento");
+    puts("Reformando o estacionamento");
+  } else if (estacionamentoSemCarros(estacionamento) && !estacionamento->aberto && estacionamento->reformado) {
+    puts("Fechamento do estacionamento");
+  }
 }
 
 void retirarCarroPelaSaida(Estacionamento *estacionamento, Funcionario *funcionario, Carro *carros, int tempo, char * placa) {
 
+  Carro *quemSaiu;
   Carro *carrosRetirados[MAX_VEICULOS] = {};
   Funcionario *funcionariosRetirados[NUM_FUNCIONARIOS] = {};
   int i = 0, f = 0;
@@ -63,7 +76,7 @@ void retirarCarroPelaSaida(Estacionamento *estacionamento, Funcionario *funciona
     printf("Sem Carros");
     return;
   } else {
-
+    printf("Carro %s devera sair (estadia = %d reais)\n", placa, tempo * 12);
     bool kame = false;
 
     while (kame == false) {
@@ -73,11 +86,12 @@ void retirarCarroPelaSaida(Estacionamento *estacionamento, Funcionario *funciona
         ultimo = ultimo->prox;
       }
       if (strcmp(ultimo->placa, placa) == 0) {
+        quemSaiu = ultimo;
         printf("Carro %s retirado pelo funcionario %s\n", ultimo->placa, funcionario->prox->nome);
         penultimo->prox = NULL;
         funcionariosRetirados[f] = funcionario->prox;
         removerFuncionario(funcionario);
-        adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade);
+        adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade, false);
         f++;
         estacionamento->total_carros--;
         kame = true;
@@ -86,7 +100,7 @@ void retirarCarroPelaSaida(Estacionamento *estacionamento, Funcionario *funciona
         carrosRetirados[i] = ultimo;
         funcionariosRetirados[f] = funcionario->prox;
         removerFuncionario(funcionario);
-        adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade);
+        adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade, false);
         f++;
         i++;
         estacionamento->total_carros--;
@@ -98,16 +112,20 @@ void retirarCarroPelaSaida(Estacionamento *estacionamento, Funcionario *funciona
     *funcionariosRetirados = NULL;
 
     for (int j = i; 0 < j; --j) {
-      adicionarCarros(estacionamento, carrosRetirados[j-1]->placa);
+      adicionarCarros(estacionamento, carrosRetirados[j-1]->placa, false);
       funcionariosRetirados[f] = funcionario->prox;
       printf("Carro %s voltou pelo funcionario %s\n", carrosRetirados[j-1]->placa, funcionariosRetirados[f]->nome);
       removerFuncionario(funcionario);
-      adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade);
+      adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade, false);
       f++;
     }
+
+    printf("Carro %s saiu! Total = %d\n", quemSaiu->placa, estacionamento->total_carros);
+
   }
 }
 
+//essa função foi aplicada na função acima sem usar recursividade
 void buscandoRemovendo( Carro *carros, char * placa) {
   if (semCarros(carros)) {
     puts("Sem carros");
@@ -130,7 +148,7 @@ void retirarCarroPelaEntrada(Funcionario *funcionario, Carro *carros, int tempo,
   Funcionario funcionarioTemp = *funcionario;
 
   if (semCarros(carros)) {
-    printf("Sem Carros");
+    puts("Sem Carros");
     return;
   } else {
     Carro *ultimo = carros->prox, *penultimo = carros;

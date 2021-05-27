@@ -5,6 +5,8 @@
 #ifndef EDPROVA1_ESTACIONAMENTO_H
 #define EDPROVA1_ESTACIONAMENTO_H
 
+bool jaAvisou = false;
+
 void iniciarEstacionamento(Estacionamento *estacionamento) {
   estacionamento->aberto = true;
   estacionamento->carros->prox = NULL;
@@ -16,7 +18,7 @@ void iniciarEstacionamento(Estacionamento *estacionamento) {
 }
 
 bool estacionamentoSemCarros(Estacionamento *estacionamento) {
-  return estacionamento->carros->prox == NULL;
+  return estacionamento->carros == 0;
 }
 
 bool estacionamentoSemFuncionarios(Estacionamento *estacionamento) {
@@ -25,7 +27,17 @@ bool estacionamentoSemFuncionarios(Estacionamento *estacionamento) {
 
 void reformarEstacionamento(Estacionamento *estacionamento) {
   if (estacionamento->dinheiro >= 300) {
+    puts("Reformando estacionamento");
+    estacionamento->dinheiro = estacionamento->dinheiro - 300;
 
+  }
+}
+
+void verificarValorArrecadado(Estacionamento *estacionamento) {
+  if (estacionamento->dinheiro >= 300 && jaAvisou == false) {
+    puts("Valor do Portao obtido! Nenhum carro pode entrar!");
+    estacionamento->aberto = false;
+    jaAvisou = true;
   }
 }
 
