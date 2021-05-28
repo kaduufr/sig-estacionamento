@@ -5,32 +5,27 @@
 #ifndef EDPROVA1_LOGS_H
 #define EDPROVA1_LOGS_H
 
-void incluirLogPreReforma(char *log) {
-  FILE *arquivo;
+void criarArquivos () {
+  fopen("logs-sem-reforma.txt", "w");
+  fopen("logs-com-reforma.txt", "w");
+};
 
-  // Esta é a função de abertura de arquivos. Com modo 'w'(Abrir um arquivo texto para gravação. Se o arquivo não existir, ele será criado.
-  // Se já existir, o conteúdo anterior será destruído.)
-  arquivo = fopen("logs-iniciais.txt", "a");
-//  D:\Kadu\Documents\projetos\EdProva1\logs-iniciais
-  //Se o arquivo for não-vazio
-  if (arquivo != NULL) {
-
-    // Escreve uma string(da variável 'texto') num arquivo.
-    fputs(log, arquivo);
-    fputs("\n", arquivo);
-    fclose(arquivo);
-  }
-}
-
-void lerLogs(char *log) {
-  puts("Antes da reforma do estacionamento");
+void lerLogs(bool reformado) {
   char Linha[100];
   char *result;
   FILE *arquivo;
+
+  if (!reformado) {
+    arquivo = fopen("logs-sem-reforma.txt", "r");
+  } else {
+    arquivo = fopen("logs-com-reforma.txt", "r");
+  }
+
   if (arquivo == NULL) {
     printf("Problemas na abertura do arquivo\n");
     return;
   }
+  puts("--- LOGS ---");
 
   while (!feof(arquivo)) {
     result = fgets(Linha, 100, arquivo);  // o 'fgets' lê até 99 caracteres ou até o '\n'
@@ -40,7 +35,7 @@ void lerLogs(char *log) {
   fclose(arquivo);
 }
 
-void addLog(char *log, Estacionamento *estacionamento) {
+void addLog(char *log) {
   bool reformado = estacionamento->reformado;
   FILE *arquivo;
 

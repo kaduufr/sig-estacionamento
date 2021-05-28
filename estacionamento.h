@@ -7,7 +7,7 @@
 
 bool jaAvisou = false;
 
-void iniciarEstacionamento(Estacionamento *estacionamento) {
+void iniciarEstacionamento() {
   estacionamento->aberto = true;
   estacionamento->carros->prox = NULL;
   estacionamento->reformado = false;
@@ -15,27 +15,57 @@ void iniciarEstacionamento(Estacionamento *estacionamento) {
   estacionamento->dinheiro = 0;
   estacionamento->max = MAX_VEICULOS;
   estacionamento->total_carros = 0;
+
+  char *log = malloc(sizeof(char) * 100);
+  snprintf(log, sizeof(char) * 100, "Abertura do Estacionamento ( lotacao maxima = %d )", MAX_VEICULOS);
+  addLog(log);
 }
 
-bool estacionamentoSemCarros(Estacionamento *estacionamento) {
+bool estacionamentoSemCarros() {
   return estacionamento->carros == 0;
 }
 
-bool estacionamentoSemFuncionarios(Estacionamento *estacionamento) {
+bool estacionamentoSemFuncionarios() {
   return estacionamento->funcionarios->prox == NULL;
 }
 
-void reformarEstacionamento(Estacionamento *estacionamento) {
+void reformarEstacionamento() {
+  if (estacionamento->reformado) {
+    puts("Este estacionamento ja foi reformado!");
+    return;
+  }
   if (estacionamento->dinheiro >= 300) {
     puts("Reformando estacionamento");
-    estacionamento->dinheiro = estacionamento->dinheiro - 300;
 
+    Funcionario *funcionarios = (Funcionario *) malloc(sizeof(Funcionario));
+    Carro *carros = (Carro *) malloc(sizeof(Carro));
+
+    estacionamento->dinheiro = estacionamento->dinheiro - 300;
+    estacionamento->reformado = true;
+    estacionamento->funcionarios = funcionarios;
+    estacionamento->carros = carros;
+    estacionamento->aberto = true;
+    estacionamento->max = MAX_VEICULOS;
+    estacionamento->total_carros = 0;
+    estacionamento->carros->prox = NULL;
+    estacionamento->funcionarios->prox = NULL;
+
+    resetarIdCarros();
+    resetarIdFuncionarios();
+
+    lerLogs(false);
+
+    puts("Estacionamento Aberto");
+    char *log = malloc(sizeof(char) * 100);
+    snprintf(log, sizeof(char) * 100, "Abertura do Estacionamento ( lotacao maxima = %d )", MAX_VEICULOS);
+    addLog(log);
   }
 }
 
-void verificarValorArrecadado(Estacionamento *estacionamento) {
+void verificarValorArrecadado() {
   if (estacionamento->dinheiro >= 300 && jaAvisou == false) {
     puts("Valor do Portao obtido! Nenhum carro pode entrar!");
+    addLog("Valor do Portao obtido! Nenhum carro pode entrar!");
     estacionamento->aberto = false;
     jaAvisou = true;
   }

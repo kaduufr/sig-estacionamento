@@ -9,10 +9,10 @@
 #define NUM_FUNCIONARIOS 3
 
 // funções do estacionamento
-void iniciarEstacionamento(Estacionamento *estacionamento);
-bool estacionamentoSemCarros(Estacionamento *estacionamento);
-void reformarEstacionamento(Estacionamento *estacionamento);
-void verificarValorArrecadado(Estacionamento *estacionamento);
+void iniciarEstacionamento();
+bool estacionamentoSemCarros();
+void reformarEstacionamento();
+void verificarValorArrecadado();
 
 //funções do funcionario
 void imprimirFuncionarios(Funcionario *funcionarios);
@@ -21,6 +21,7 @@ Funcionario *novoFuncionario(char *nomeA, int idA, int idadeA, bool);
 bool semFuncionarios(Funcionario *);
 void removerFuncionario(Funcionario *funcionarios);
 bool funcionarioJaExiste(Funcionario *funcionarios, int id);
+void resetarIdFuncionarios();
 
 void ordenar(Funcionario *funcionarios, int tipo);
 void ordenarPorId(Funcionario *funcionarios);
@@ -28,17 +29,18 @@ void ordenarPorIdade(Funcionario *funcionarios);
 void ordenarPorNome(Funcionario *funcionarios);
 
 // funções do carro
-void adicionarCarros(Estacionamento *, char *, bool);
-Carro *novoCarro(char *);
-void retirarCarroPelaSaida(Estacionamento *,Funcionario *, Carro *, int , char*);
-void retirarCarroPelaEntrada(Funcionario *, Carro *, int , char *);
+void adicionarCarros(char *, bool, int);
+Carro *novoCarro(char *, int);
+void retirarCarroPelaEntrada( Funcionario *funcionario, Carro *carros, int tempo, char *placa);
+void retiraCarroPelaSaida( Funcionario *funcionario, Carro *carros, int tempo, char *placa);
 bool semCarros(Carro *carros);
 bool estacionamentoCheio(Carro *carros);
-void retirarCarro(Estacionamento *estacionamento, int tempo, char *placa);
-void buscandoRemovendo( Carro *carros, char * placa);
+void retirarCarro( int tempo, char *placa);
 int buscarPosicaoDoCarro(Carro *carros, char *);
+void resetarIdCarros();
 
 // funções de log
-void incluirLogPreReforma(char *log);
-void addLog(char *log, Estacionamento* estacionamento);
+void criarArquivos();
+void addLog(char *log);
+void lerLogs(bool);
 #endif //EDPROVA1_FUNCOES_D_H

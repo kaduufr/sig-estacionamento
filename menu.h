@@ -14,9 +14,10 @@ enum options {
   ListarFuncionarios = 5,
   AdicionarCarro = 6,
   RetirarCarro = 7,
-  Reformar = 8
+  ListarCarros = 8,
+  Reformar = 9
 };
-int menu (Estacionamento * estacionamento) {
+int menu () {
   puts("Bem Vindo ao Sistemas do Estacionamento");
   puts("Escolha uma das opçoes desejadas");
   printf("Dinheiro Total: %d\n", estacionamento->dinheiro);
@@ -30,7 +31,8 @@ int menu (Estacionamento * estacionamento) {
   puts("5 - Listar Funcionarios");
   puts("6 - Adicionar Carro");
   puts("7 - Retirar Carro");
-  puts("8 - Reformar Estacionamento");
+  puts("8 - Listar Carros");
+  puts("9 - Reformar Estacionamento");
   puts("0 - Sair");
 
   int opcao = 0, idade = 0, tempo_gasto = 0;
@@ -65,7 +67,7 @@ int menu (Estacionamento * estacionamento) {
       placa = malloc(sizeof(char) * 5);
       scanf("%s",placa);
       fflush(stdin);
-      adicionarCarros(estacionamento, placa, true);
+      adicionarCarros( placa, true, 0);
       break;
     case RetirarCarro:
       puts("Informe a placa do Veiculo:");
@@ -74,10 +76,14 @@ int menu (Estacionamento * estacionamento) {
       fflush(stdin);
       puts("Quantas horas?");
       scanf("%d", &tempo_gasto);
-      retirarCarro(estacionamento, tempo_gasto, placa);
+      retirarCarro(tempo_gasto, placa);
+      break;
     case Reformar:
       estacionamento->aberto = false;
-      reformarEstacionamento(estacionamento);
+      reformarEstacionamento();
+      break;
+    case ListarCarros:
+      imprimirCarros(estacionamento->carros);
       break;
     default:
       return 1;

@@ -7,8 +7,8 @@
 
 int id = 1;
 
-void adicionarFuncionarios(Funcionario *funcionarios, char *nomeA, int idA, int idadeA, bool info){
-  if (semFuncionarios(funcionarios)){
+void adicionarFuncionarios(Funcionario *funcionarios, char *nomeA, int idA, int idadeA, bool info) {
+  if (semFuncionarios(funcionarios)) {
     funcionarios->prox = novoFuncionario(nomeA, idA, idadeA, info);
   } else if (funcionarioJaExiste(funcionarios, idA)) {
     return;
@@ -49,6 +49,10 @@ Funcionario *novoFuncionario(char *nomeA, int idA, int idadeA, bool info) {
   }
   if (info) {
     printf("Funcionario de nome %s (ID = %d, Idade = %d) cadastrado\n", novo->nome, novo->id, novo->idade);
+    char *log = malloc(sizeof(char) * 100);
+    snprintf(log, sizeof(char) * 100, "Funcionario de nome %s (ID = %d, Idade = %d) cadastrado", novo->nome, novo->id,
+             novo->idade);
+    addLog(log);
   }
   id++;
   return novo;
@@ -61,7 +65,7 @@ void imprimirFuncionarios(Funcionario *funcionarios) {
   }
   Funcionario *tmp = funcionarios->prox;
   while (tmp != NULL) {
-    printf("ID: %d \t Nome: %s \t Idade: %d \n", tmp->id ,tmp->nome, tmp->idade);
+    printf("ID: %d \t Nome: %s \t Idade: %d \n", tmp->id, tmp->nome, tmp->idade);
     tmp = tmp->prox;
   }
 }
@@ -80,8 +84,8 @@ void ordenarPorNome(Funcionario *functionarios) {
 
   while (aux != NULL) {
     t = aux->prox;
-    while(t != NULL) {
-      if(strcmp(aux->nome, t->nome) > 0) {
+    while (t != NULL) {
+      if (strcmp(aux->nome, t->nome) > 0) {
         Funcionario tmp = *t;
 
 //        strcpy(t->nome, aux->nome);
@@ -98,6 +102,7 @@ void ordenarPorNome(Funcionario *functionarios) {
     }
     aux = aux->prox;
   }
+  addLog("Ordenacao usada: NOME");
 }
 
 void ordenarPorIdade(Funcionario *funcionarios) {
@@ -123,6 +128,7 @@ void ordenarPorIdade(Funcionario *funcionarios) {
     }
     aux = aux->prox;
   }
+  addLog("Ordenacao usada: IDADE");
 }
 
 void ordenarPorId(Funcionario *funcionarios) {
@@ -149,26 +155,34 @@ void ordenarPorId(Funcionario *funcionarios) {
     }
     aux = aux->prox;
   }
+  addLog("Ordenacao usada: ID");
 }
 
 void ordenar(Funcionario *funcionarios, int tipo) {
-  if (funcionarios == NULL || (funcionarios)->prox == NULL) return;
 
-  switch (tipo) {
+  if (semFuncionarios(funcionarios)) {
+    puts("Sem funcionarios!!");
+    return;
+  } else {
+
+    if (funcionarios == NULL || (funcionarios)->prox == NULL) return;
+    switch (tipo) {
 //    1: ordenar pelo id
-    case 1:
-      ordenarPorId(funcionarios);
-      break;
+      case 1:
+        ordenarPorId(funcionarios);
+        break;
 //    2: ordenar pelo nome
-    case 2:
-      ordenarPorNome(funcionarios);
-      break;
+      case 2:
+        ordenarPorNome(funcionarios);
+        break;
 //    3: ordenar pelo idade
-    case 3:
-      ordenarPorIdade(funcionarios);
-      break;
-    default:
-      ordenarPorId(funcionarios);
+      case 3:
+        ordenarPorIdade(funcionarios);
+        break;
+      default:
+        ordenarPorId(funcionarios);
+        break;
+    }
   }
 
 }
@@ -192,4 +206,8 @@ bool funcionarioJaExiste(Funcionario *funcionarios, int id) {
     tmp = tmp->prox;
   }
   return false;
+}
+
+void resetarIdFuncionarios() {
+  id = 1;
 }

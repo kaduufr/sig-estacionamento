@@ -33,4 +33,6 @@ typedef struct estacionamento {
   Carro *carros;
 } Estacionamento ;
 
+Estacionamento *estacionamento;
+
 #endif //EDPROVA1_STRUCTS_H
