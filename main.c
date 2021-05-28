@@ -28,7 +28,7 @@ int main() {
     puts("");
   }
 
-  lerLogs(estacionamento->reformado);
+  lerLogs();
 
   return 0;
 }

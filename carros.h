@@ -13,7 +13,7 @@ void adicionarCarros( char *placa, bool info, int idC) {
   if (!estacionamento->aberto) {
     puts("Estacionamento Fechado");
     return;
-  } else if (estacionamento->total_carros >= 3) {
+  } else if (estacionamento->total_carros >= MAX_VEICULOS) {
     puts("Estacionamento Lotado!!!");
     addLog("Estacionamento Lotado");
     return;
@@ -55,6 +55,7 @@ Carro *novoCarro(char *placa, int idC) {
   }
   strcpy(novo->placa, placa);
   novo->prox = NULL;
+  return novo;
 }
 
 void retirarCarro( int tempo, char *placa) {
@@ -65,6 +66,7 @@ void retirarCarro( int tempo, char *placa) {
     int posicao = buscarPosicaoDoCarro(estacionamento->carros, placa);
     if (posicao <= 0) {
       puts("Carro não encontrado");
+      return;
     } else if (estacionamento->reformado) {
       if (posicao > (MAX_VEICULOS / 2)) {
         retiraCarroPelaSaida(estacionamento->funcionarios, estacionamento->carros, tempo, placa);
@@ -127,6 +129,7 @@ void retirarCarroPelaEntrada( Funcionario *funcionario, Carro *carros, int tempo
         snprintf(log, sizeof(char) * 100, "--- Carro %s retirado pelo funcionario %s", ultimo->placa, funcionario->prox->nome);
         addLog(log);
         carrosRetirados[i] = ultimo;
+        penultimo->prox = NULL;
         funcionariosRetirados[f] = funcionario->prox;
         removerFuncionario(funcionario);
         adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome,
@@ -155,7 +158,7 @@ void retirarCarroPelaEntrada( Funcionario *funcionario, Carro *carros, int tempo
     }
 
     printf("Carro %s saiu! Total = %d\n", quemSaiu->placa, estacionamento->total_carros);
-    snprintf(log, sizeof(char) * 100, "Carro %s saiu! Total = %d\n", quemSaiu->placa, estacionamento->total_carros);
+    snprintf(log, sizeof(char) * 100, "Carro %s saiu! Total = %d", quemSaiu->placa, estacionamento->total_carros);
     addLog(log);
   }
 }
@@ -174,7 +177,7 @@ void retiraCarroPelaSaida(Funcionario *funcionario, Carro *carros, int tempo, ch
   } else {
     Carro *primeiro = carros->prox, *anterior = carros;
     printf("Carro %s devera sair pelo portao novo (estadia = %d reais)\n", placa, tempo * 12);
-    snprintf(log, sizeof(char) * 100, "Carro %s devera sair pelo portao novo (estadia = %d reais)\n", placa, tempo * 12);
+    snprintf(log, sizeof(char) * 100, "Carro %s devera sair pelo portao novo (estadia = %d reais)", placa, tempo * 12);
     addLog(log);
 
     bool parada = false;
@@ -188,6 +191,7 @@ void retiraCarroPelaSaida(Funcionario *funcionario, Carro *carros, int tempo, ch
           addLog(log);
           anterior->prox = primeiro->prox;
           funcionariosRetirados[f] = funcionario->prox;
+          removerFuncionario(funcionario);
           adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome,
                                 funcionariosRetirados[f]->id, funcionariosRetirados[f]->idade, false);
           f++;
@@ -216,11 +220,10 @@ void retiraCarroPelaSaida(Funcionario *funcionario, Carro *carros, int tempo, ch
       }
     }
     for (int j = 0; j < i; ++j) {
-      puts(carrosRetirados[j]->placa);
       adicionarCarros(carrosRetirados[j]->placa, false, carrosRetirados[j]->id);
       funcionariosRetirados[f] = funcionario->prox;
       printf("Carro %s voltou pelo funcionario %s\n", carrosRetirados[j]->placa, funcionariosRetirados[f]->nome);
-      snprintf(log, sizeof(char) * 100, "--- Carro %s voltou pelo funcionario %s\n", carrosRetirados[j]->placa, funcionariosRetirados[f]->nome);
+      snprintf(log, sizeof(char) * 100, "--- Carro %s voltou pelo funcionario %s", carrosRetirados[j]->placa, funcionariosRetirados[f]->nome);
       addLog(log);
       removerFuncionario(funcionario);
       adicionarFuncionarios(estacionamento->funcionarios, funcionariosRetirados[f]->nome, funcionariosRetirados[f]->id,
@@ -229,7 +232,7 @@ void retiraCarroPelaSaida(Funcionario *funcionario, Carro *carros, int tempo, ch
       estacionamento->total_carros++;
     }
     printf("Carro %s saiu! Total = %d\n", quemSaiu->placa, estacionamento->total_carros);
-    snprintf(log, sizeof(char) * 100, "Carro %s saiu! Total = %d\n", quemSaiu->placa, estacionamento->total_carros);
+    snprintf(log, sizeof(char) * 100, "Carro %s saiu! Total = %d", quemSaiu->placa, estacionamento->total_carros);
     addLog(log);
   }
 }
@@ -249,6 +252,7 @@ int buscarPosicaoDoCarro(Carro *carros, char *placa) {
     count++;
   }
   if (position == 1) return 3;
+  if (position == 2) return 2;
   if (position == 3) return 1;
   return 0;
 }

@@ -74,9 +74,6 @@ bool semFuncionarios(Funcionario *funcionarios) {
   return funcionarios->prox == NULL;
 }
 
-#endif //EDPROVA1_FUNCIONARIOS_H
-
-
 void ordenarPorNome(Funcionario *functionarios) {
 
   Funcionario *aux = functionarios, *t;
@@ -211,3 +208,5 @@ bool funcionarioJaExiste(Funcionario *funcionarios, int id) {
 void resetarIdFuncionarios() {
   id = 1;
 }
+
+#endif //EDPROVA1_FUNCIONARIOS_H

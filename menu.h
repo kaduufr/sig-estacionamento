@@ -36,8 +36,8 @@ int menu () {
   puts("0 - Sair");
 
   int opcao = 0, idade = 0, tempo_gasto = 0;
-  scanf("%d", &opcao);
   char *nome, *placa;
+  scanf("%d", &opcao);
 
   switch (opcao) {
     case AdicionarFuncionario:

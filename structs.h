@@ -18,7 +18,6 @@ typedef struct funcionario {
 // Pilha e Lista
 typedef struct carro {
   int id;
-  int horas;
   char placa[2];
   struct carro *prox;
 } Carro;

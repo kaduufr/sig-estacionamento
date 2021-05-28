@@ -10,12 +10,12 @@ void criarArquivos () {
   fopen("logs-com-reforma.txt", "w");
 };
 
-void lerLogs(bool reformado) {
+void lerLogs() {
   char Linha[100];
   char *result;
   FILE *arquivo;
 
-  if (!reformado) {
+  if (!estacionamento->reformado) {
     arquivo = fopen("logs-sem-reforma.txt", "r");
   } else {
     arquivo = fopen("logs-com-reforma.txt", "r");
@@ -28,9 +28,8 @@ void lerLogs(bool reformado) {
   puts("--- LOGS ---");
 
   while (!feof(arquivo)) {
-    result = fgets(Linha, 100, arquivo);  // o 'fgets' lê até 99 caracteres ou até o '\n'
-    if (result)  // Se foi possível ler
-      printf("%s",Linha);
+    result = fgets(Linha, 100, arquivo);
+    if (result) printf("%s",Linha);
   }
   fclose(arquivo);
 }

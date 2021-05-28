@@ -22,11 +22,7 @@ void iniciarEstacionamento() {
 }
 
 bool estacionamentoSemCarros() {
-  return estacionamento->carros == 0;
-}
-
-bool estacionamentoSemFuncionarios() {
-  return estacionamento->funcionarios->prox == NULL;
+  return estacionamento->total_carros == 0;
 }
 
 void reformarEstacionamento() {
@@ -35,6 +31,8 @@ void reformarEstacionamento() {
     return;
   }
   if (estacionamento->dinheiro >= 300) {
+    lerLogs();
+
     puts("Reformando estacionamento");
 
     Funcionario *funcionarios = (Funcionario *) malloc(sizeof(Funcionario));
@@ -52,8 +50,6 @@ void reformarEstacionamento() {
 
     resetarIdCarros();
     resetarIdFuncionarios();
-
-    lerLogs(false);
 
     puts("Estacionamento Aberto");
     char *log = malloc(sizeof(char) * 100);
